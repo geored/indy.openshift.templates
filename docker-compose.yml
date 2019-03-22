@@ -1,0 +1,21 @@
+version: '3'
+services:
+  indy-ui:
+    image: "indyperf/indy-ui:5"
+    expose:
+      -  ${INDY_UI_PORT}
+    environment:
+      API_HOST: ${INDY_UI_HOST}
+      API_SERVER_PORT: ${INDY_UI_PORT}
+    ports:
+      -  ${INDY_UI_PORT}:${INDY_UI_PORT}
+    
+  indy-perf:
+    image: "indyperf/indy-perf:5"
+    expose:
+      -  ${INDY_PERF_PORT}
+    environment:
+      API_HOST: ${INDY_PERF_HOST}
+      API_SERVER_PORT: ${INDY_PERF_PORT}
+    ports:
+      -  ${INDY_PERF_PORT}:${INDY_PERF_PORT}
