@@ -1,0 +1,296 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: indy-ui
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu, memory request for
+        container indy-ui; cpu, memory limit for container indy-ui'
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: indy-ui
+      openshift.io/deployment.name: indy-ui-1
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: indy-ui-1-
+    labels:
+      app: indy-ui
+      deployment: indy-ui-1
+      deploymentconfig: indy-ui
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: indy-ui-1
+      uid: 66dee0a9-47c6-11e9-aa42-fa163e8c1860
+  spec:
+    containers:
+    - image: docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c
+      imagePullPolicy: IfNotPresent
+      name: indy-ui
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1000Mi
+        requests:
+          cpu: 300m
+          memory: 400Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1008060000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-llpv5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-sxckg
+    nodeName: cpt-0025.paas.prod.upshift.rdu2.redhat.com
+    nodeSelector:
+      region: compute
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1008060000
+      seLinuxOptions:
+        level: s0:c90,c25
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: default-token-llpv5
+      secret:
+        defaultMode: 420
+        secretName: default-token-llpv5
+  status: {}
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2019-03-16 08:35:22 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2019-03-16 08:35:06 +0000 UTC
+      openshift.io/deployer-pod.name: indy-ui-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: indy-ui
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"indy-ui","namespace":"nos-perf","selfLink":"/apis/apps.openshift.io/v1/namespaces/nos-perf/deploymentconfigs/indy-ui","uid":"66c5be14-47c6-11e9-8f19-fa163e4a655d","resourceVersion":"371299074","generation":2,"creationTimestamp":"2019-03-16T08:35:06Z","labels":{"app":"indy-ui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["indy-ui"],"from":{"kind":"ImageStreamTag","namespace":"nos-perf","name":"indy-ui:6.6"},"lastTriggeredImage":"docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"indy-ui","deploymentconfig":"indy-ui"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"indy-ui","deploymentconfig":"indy-ui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"indy-ui","image":"docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c","ports":[{"containerPort":8000,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":1,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2019-03-16T08:35:06Z","lastTransitionTime":"2019-03-16T08:35:06Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: indy-ui
+      openshift.io/deployment-config.name: indy-ui
+    name: indy-ui-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: indy-ui
+      uid: 66c5be14-47c6-11e9-8f19-fa163e4a655d
+  spec:
+    replicas: 1
+    selector:
+      app: indy-ui
+      deployment: indy-ui-1
+      deploymentconfig: indy-ui
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: indy-ui
+          openshift.io/deployment.name: indy-ui-1
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indy-ui
+          deployment: indy-ui-1
+          deploymentconfig: indy-ui
+      spec:
+        containers:
+        - image: docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c
+          imagePullPolicy: IfNotPresent
+          name: indy-ui
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: indy-ui
+    name: indy-ui
+  spec:
+    ports:
+    - name: 8000-tcp
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: indy-ui
+      deploymentconfig: indy-ui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: indy-ui
+    name: indy-ui
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: indy-ui
+      deploymentconfig: indy-ui
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indy-ui
+          deploymentconfig: indy-ui
+      spec:
+        containers:
+        - image: docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c
+          imagePullPolicy: IfNotPresent
+          name: indy-ui
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - indy-ui
+        from:
+          kind: ImageStreamTag
+          name: indy-ui:6.6
+          namespace: nos-perf
+        lastTriggeredImage: docker.io/georgy/indy-ui@sha256:d6336c78b9d4aa3de9ac1b69547dce1e8f13f9a03e01c56409ec704399a36c5c
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/image.dockerRepositoryCheck: 2019-03-16T08:35:06Z
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: indy-ui
+    name: indy-ui
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: docker.io/georgy/indy-ui:6.6
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/nos-perf/indy-ui:6.6
+      generation: 2
+      importPolicy: {}
+      name: "6.6"
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: indy-ui
+    name: indy-ui
+  spec:
+    host: indy-ui-nos-perf.cloud.paas.upshift.redhat.com
+    port:
+      targetPort: 8000-tcp
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: indy-ui
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2019-03-16T08:35:55Z
+        status: "True"
+        type: Admitted
+      host: indy-ui-nos-perf.cloud.paas.upshift.redhat.com
+      routerName: router
+      wildcardPolicy: None

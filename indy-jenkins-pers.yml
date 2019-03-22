@@ -1,0 +1,125 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: indy-jenkins-pers
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        jenkins; cpu limit for container jenkins'
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: jenkins
+      openshift.io/deployment.name: jenkins-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: jenkins-1-
+    labels:
+      deployment: jenkins-1
+      deploymentconfig: jenkins
+      name: jenkins
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: jenkins-1
+      uid: 963cb5f0-47dc-11e9-ba57-0ab8769191d3
+  spec:
+    containers:
+    - env:
+      - name: OPENSHIFT_ENABLE_OAUTH
+        value: "true"
+      - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
+        value: "true"
+      - name: DISABLE_ADMINISTRATIVE_MONITORS
+        value: "true"
+      - name: KUBERNETES_MASTER
+        value: https://kubernetes.default:443
+      - name: KUBERNETES_TRUST_CERTIFICATES
+        value: "true"
+      - name: JENKINS_SERVICE_NAME
+        value: jenkins
+      - name: JNLP_SERVICE_NAME
+        value: jenkins-jnlp
+      - name: ENABLE_FATAL_ERROR_LOG_FILE
+        value: "false"
+      image: docker-registry.default.svc:5000/openshift/jenkins@sha256:3b6ad6c87518f153c6c38c5190f6d95535af3c8210adc8904d6a7f7f4180a36f
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 2
+        httpGet:
+          path: /login
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 420
+        periodSeconds: 360
+        successThreshold: 1
+        timeoutSeconds: 240
+      name: jenkins
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /login
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 240
+      resources:
+        limits:
+          cpu: "1"
+          memory: 512Mi
+        requests:
+          cpu: 20m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - NET_RAW
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1014120000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/lib/jenkins
+        name: jenkins-data
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: jenkins-token-jd7lp
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: jenkins-dockercfg-j4rb9
+    nodeName: ip-172-31-50-201.us-west-2.compute.internal
+    nodeSelector:
+      type: compute
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1014120000
+      seLinuxOptions:
+        level: s0:c119,c39
+    serviceAccount: jenkins
+    serviceAccountName: jenkins
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: jenkins-data
+      persistentVolumeClaim:
+        claimName: jenkins
+    - name: jenkins-token-jd7lp
+      secret:
+        defaultMode: 420
+        secretName: jenkins-token-jd7lp
+  status: {}

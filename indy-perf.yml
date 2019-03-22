@@ -1,0 +1,889 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: indy-perf
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu, memory request for
+        container indy-perf; cpu, memory limit for container indy-perf'
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: indy-perf
+      openshift.io/deployment.name: indy-perf-3
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: indy-perf-3-
+    labels:
+      app: indyperf
+      deployment: indy-perf-3
+      deploymentconfig: indy-perf
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: indy-perf-3
+      uid: 95eb4486-459c-11e9-a56b-fa163e8c1860
+  spec:
+    containers:
+    - image: docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099
+      imagePullPolicy: Always
+      name: indy-perf
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1000Mi
+        requests:
+          cpu: 300m
+          memory: 400Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1008060000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-llpv5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-sxckg
+    nodeName: cpt-0013.paas.prod.upshift.rdu2.redhat.com
+    nodeSelector:
+      region: compute
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1008060000
+      seLinuxOptions:
+        level: s0:c90,c25
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: default-token-llpv5
+      secret:
+        defaultMode: 420
+        secretName: default-token-llpv5
+  status: {}
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2019-03-13 11:51:46 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2019-03-13 11:51:10 +0000 UTC
+      openshift.io/deployer-pod.name: indy-perf-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: indy-perf
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"indy-perf","namespace":"nos-perf","selfLink":"/apis/apps.openshift.io/v1/namespaces/nos-perf/deploymentconfigs/indy-perf","uid":"1c36780e-457a-11e9-b66b-fa163e4a655d","resourceVersion":"365225383","generation":2,"creationTimestamp":"2019-03-13T10:23:57Z","labels":{"app":"indyperf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["indy-perf"],"from":{"kind":"ImageStreamTag","namespace":"nos-perf","name":"indy-perf:latest"},"lastTriggeredImage":"docker.io/georgy/indy-perf@sha256:6bd50039ab72ce6942b7bfbc1465081f8954398a76f0d45a381804868fed2fab"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"indyperf","deploymentconfig":"indy-perf"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"indyperf","deploymentconfig":"indy-perf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"indy-perf","image":"docker.io/georgy/indy-perf@sha256:6bd50039ab72ce6942b7bfbc1465081f8954398a76f0d45a381804868fed2fab","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":1,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2019-03-13T10:23:57Z","lastTransitionTime":"2019-03-13T10:23:57Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 3
+    labels:
+      app: indyperf
+      openshift.io/deployment-config.name: indy-perf
+    name: indy-perf-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: indy-perf
+      uid: 1c36780e-457a-11e9-b66b-fa163e4a655d
+  spec:
+    replicas: 0
+    selector:
+      app: indyperf
+      deployment: indy-perf-1
+      deploymentconfig: indy-perf
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: indy-perf
+          openshift.io/deployment.name: indy-perf-1
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indyperf
+          deployment: indy-perf-1
+          deploymentconfig: indy-perf
+      spec:
+        containers:
+        - image: docker.io/georgy/indy-perf@sha256:6bd50039ab72ce6942b7bfbc1465081f8954398a76f0d45a381804868fed2fab
+          imagePullPolicy: Always
+          name: indy-perf
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2019-03-13 12:02:31 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2019-03-13 12:02:21 +0000 UTC
+      openshift.io/deployer-pod.name: indy-perf-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: indy-perf
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"indy-perf","namespace":"nos-perf","selfLink":"/apis/apps.openshift.io/v1/namespaces/nos-perf/deploymentconfigs/indy-perf","uid":"1c36780e-457a-11e9-b66b-fa163e4a655d","resourceVersion":"365246175","generation":3,"creationTimestamp":"2019-03-13T10:23:57Z","labels":{"app":"indyperf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["indy-perf"],"from":{"kind":"ImageStreamTag","namespace":"nos-perf","name":"indy-perf:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:fa0b60e02a643fd452698b14d34932a0c6d4a0ae9a4ba327ae253b0601e9e05e"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"indyperf","deploymentconfig":"indy-perf"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"indyperf","deploymentconfig":"indy-perf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"indy-perf","image":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:fa0b60e02a643fd452698b14d34932a0c6d4a0ae9a4ba327ae253b0601e9e05e","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":2,"observedGeneration":2,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:fa0b60e02a643fd452698b14d34932a0c6d4a0ae9a4ba327ae253b0601e9e05e"}}}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2019-03-13T11:51:46Z","lastTransitionTime":"2019-03-13T11:51:46Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2019-03-13T11:51:46Z","lastTransitionTime":"2019-03-13T11:51:46Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"indy-perf-1\" successfully rolled out"}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 3
+    labels:
+      app: indyperf
+      openshift.io/deployment-config.name: indy-perf
+    name: indy-perf-2
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: indy-perf
+      uid: 1c36780e-457a-11e9-b66b-fa163e4a655d
+  spec:
+    replicas: 0
+    selector:
+      app: indyperf
+      deployment: indy-perf-2
+      deploymentconfig: indy-perf
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: indy-perf
+          openshift.io/deployment.name: indy-perf-2
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indyperf
+          deployment: indy-perf-2
+          deploymentconfig: indy-perf
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:fa0b60e02a643fd452698b14d34932a0c6d4a0ae9a4ba327ae253b0601e9e05e
+          imagePullPolicy: Always
+          name: indy-perf
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2019-03-13 14:30:54 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2019-03-13 14:30:44 +0000 UTC
+      openshift.io/deployer-pod.name: indy-perf-3-deploy
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: indy-perf
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"indy-perf","namespace":"nos-perf","selfLink":"/apis/apps.openshift.io/v1/namespaces/nos-perf/deploymentconfigs/indy-perf","uid":"1c36780e-457a-11e9-b66b-fa163e4a655d","resourceVersion":"365544164","generation":4,"creationTimestamp":"2019-03-13T10:23:57Z","labels":{"app":"indyperf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["indy-perf"],"from":{"kind":"ImageStreamTag","namespace":"nos-perf","name":"indy-perf:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"indyperf","deploymentconfig":"indy-perf"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"indyperf","deploymentconfig":"indy-perf"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"indy-perf","image":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":3,"observedGeneration":3,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099"}}}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2019-03-13T11:51:46Z","lastTransitionTime":"2019-03-13T11:51:46Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2019-03-13T12:02:32Z","lastTransitionTime":"2019-03-13T12:02:30Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"indy-perf-2\" successfully rolled out"}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: indyperf
+      openshift.io/deployment-config.name: indy-perf
+    name: indy-perf-3
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: indy-perf
+      uid: 1c36780e-457a-11e9-b66b-fa163e4a655d
+  spec:
+    replicas: 1
+    selector:
+      app: indyperf
+      deployment: indy-perf-3
+      deploymentconfig: indy-perf
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "3"
+          openshift.io/deployment-config.name: indy-perf
+          openshift.io/deployment.name: indy-perf-3
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indyperf
+          deployment: indy-perf-3
+          deploymentconfig: indy-perf
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099
+          imagePullPolicy: Always
+          name: indy-perf
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: indyperf
+    name: indy-perf
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: indyperf
+      deploymentconfig: indy-perf
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 4
+    labels:
+      app: indyperf
+    name: indy-perf
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: indyperf
+      deploymentconfig: indy-perf
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: indyperf
+          deploymentconfig: indy-perf
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099
+          imagePullPolicy: Always
+          name: indy-perf
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - indy-perf
+        from:
+          kind: ImageStreamTag
+          name: indy-perf:latest
+          namespace: nos-perf
+        lastTriggeredImage: docker-registry.default.svc:5000/nos-perf/indy-perf@sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: indyperf
+    name: indy-perf
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: maven:3.5.4_8u191-jdk
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: fWXhF3kdYJQsbVZdvRqS
+      type: GitHub
+    - generic:
+        secret: WpEgVDjPb8OMZNKsQbCD
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: build.openshift.io/v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.number: "4"
+      openshift.io/build.pod-name: indy-perf-4-build
+    creationTimestamp: null
+    labels:
+      app: indyperf
+      buildconfig: indy-perf
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.start-policy: Serial
+    name: indy-perf-4
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: indy-perf
+      uid: 1c217eb3-457a-11e9-b66b-fa163e4a655d
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-m6d72
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        commit: b2de2390fef7a43f9757cef18a3e2d86bd7c33c8
+        committer:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        message: Test Indy Performance
+      type: Git
+    serviceAccount: builder
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: georgy/maven@sha256:ca7c742fddb0d889e1c38cefffd111d6d98d188def14fd6d7a3c92cb07a6dd2d
+      type: Docker
+    triggeredBy:
+    - message: Manually triggered
+  status:
+    config:
+      name: indy-perf
+    logSnippet: "Progress (1): 2.2/75 kB\rProgress (1): 5.0/75 kB\rProgress (...unit4/2.19.1/surefire-junit4-2.19.1.jar
+      (75 kB at 517 kB/s)\n-------------------------------------------------------\n
+      T E S T S\n-------------------------------------------------------\nRunning
+      org.commonjava.indy.rest.apigen.SwaggerExportTest"
+    message: Generic Build failure - check logs for details.
+    output: {}
+    outputDockerImageReference: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+    phase: New
+    reason: GenericBuildFailed
+    stages:
+    - durationMilliseconds: 4787
+      name: FetchInputs
+      startTime: 2019-03-13T11:30:06Z
+      steps:
+      - durationMilliseconds: 4787
+        name: FetchGitSource
+        startTime: 2019-03-13T11:30:06Z
+- apiVersion: build.openshift.io/v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.number: "5"
+      openshift.io/build.pod-name: indy-perf-5-build
+    creationTimestamp: null
+    labels:
+      app: indyperf
+      buildconfig: indy-perf
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.start-policy: Serial
+    name: indy-perf-5
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: indy-perf
+      uid: 1c217eb3-457a-11e9-b66b-fa163e4a655d
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-m6d72
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        commit: b2de2390fef7a43f9757cef18a3e2d86bd7c33c8
+        committer:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        message: Test Indy Performance
+      type: Git
+    serviceAccount: builder
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: georgy/maven@sha256:ca7c742fddb0d889e1c38cefffd111d6d98d188def14fd6d7a3c92cb07a6dd2d
+      type: Docker
+    triggeredBy:
+    - message: Manually triggered
+  status:
+    config:
+      name: indy-perf
+    output:
+      to:
+        imageDigest: sha256:fa0b60e02a643fd452698b14d34932a0c6d4a0ae9a4ba327ae253b0601e9e05e
+    outputDockerImageReference: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 1268
+      name: FetchInputs
+      startTime: 2019-03-13T11:51:38Z
+      steps:
+      - durationMilliseconds: 1268
+        name: FetchGitSource
+        startTime: 2019-03-13T11:51:38Z
+    - durationMilliseconds: 5584
+      name: PullImages
+      startTime: 2019-03-13T11:51:43Z
+      steps:
+      - durationMilliseconds: 5584
+        name: PullBaseImage
+        startTime: 2019-03-13T11:51:43Z
+    - durationMilliseconds: 613046
+      name: Build
+      startTime: 2019-03-13T11:51:48Z
+      steps:
+      - durationMilliseconds: 613046
+        name: DockerBuild
+        startTime: 2019-03-13T11:51:48Z
+    - durationMilliseconds: 19422
+      name: PushImage
+      startTime: 2019-03-13T12:02:02Z
+      steps:
+      - durationMilliseconds: 19422
+        name: PushDockerImage
+        startTime: 2019-03-13T12:02:02Z
+- apiVersion: build.openshift.io/v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.number: "6"
+      openshift.io/build.pod-name: indy-perf-6-build
+    creationTimestamp: null
+    labels:
+      app: indyperf
+      buildconfig: indy-perf
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.start-policy: Serial
+    name: indy-perf-6
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: indy-perf
+      uid: 1c217eb3-457a-11e9-b66b-fa163e4a655d
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-m6d72
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        commit: b2de2390fef7a43f9757cef18a3e2d86bd7c33c8
+        committer:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        message: Test Indy Performance
+      type: Git
+    serviceAccount: builder
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: georgy/maven@sha256:ca7c742fddb0d889e1c38cefffd111d6d98d188def14fd6d7a3c92cb07a6dd2d
+      type: Docker
+    triggeredBy:
+    - message: Manually triggered
+  status:
+    config:
+      name: indy-perf
+    logSnippet: "Progress (1): 2.2/75 kB\rProgress (1): 5.0/75 kB\rProgress (...unit4/2.19.1/surefire-junit4-2.19.1.jar
+      (75 kB at 585 kB/s)\n-------------------------------------------------------\n
+      T E S T S\n-------------------------------------------------------\nRunning
+      org.commonjava.indy.rest.apigen.SwaggerExportTest"
+    message: Generic Build failure - check logs for details.
+    output: {}
+    outputDockerImageReference: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+    phase: New
+    reason: GenericBuildFailed
+    stages:
+    - durationMilliseconds: 1373
+      name: FetchInputs
+      startTime: 2019-03-13T13:57:32Z
+      steps:
+      - durationMilliseconds: 1373
+        name: FetchGitSource
+        startTime: 2019-03-13T13:57:32Z
+- apiVersion: build.openshift.io/v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.number: "7"
+      openshift.io/build.pod-name: indy-perf-7-build
+    creationTimestamp: null
+    labels:
+      app: indyperf
+      buildconfig: indy-perf
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.start-policy: Serial
+    name: indy-perf-7
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: indy-perf
+      uid: 1c217eb3-457a-11e9-b66b-fa163e4a655d
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-m6d72
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        commit: b2de2390fef7a43f9757cef18a3e2d86bd7c33c8
+        committer:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        message: Test Indy Performance
+      type: Git
+    serviceAccount: builder
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: georgy/maven@sha256:ca7c742fddb0d889e1c38cefffd111d6d98d188def14fd6d7a3c92cb07a6dd2d
+      type: Docker
+    triggeredBy:
+    - message: Manually triggered
+  status:
+    config:
+      name: indy-perf
+    logSnippet: "Progress (1): 2.2/75 kB\rProgress (1): 5.0/75 kB\rProgress (...unit4/2.19.1/surefire-junit4-2.19.1.jar
+      (75 kB at 454 kB/s)\n-------------------------------------------------------\n
+      T E S T S\n-------------------------------------------------------\nRunning
+      org.commonjava.indy.rest.apigen.SwaggerExportTest"
+    message: Generic Build failure - check logs for details.
+    output: {}
+    outputDockerImageReference: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+    phase: New
+    reason: GenericBuildFailed
+    stages:
+    - durationMilliseconds: 1372
+      name: FetchInputs
+      startTime: 2019-03-13T14:08:57Z
+      steps:
+      - durationMilliseconds: 1372
+        name: FetchGitSource
+        startTime: 2019-03-13T14:08:57Z
+- apiVersion: build.openshift.io/v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.number: "8"
+      openshift.io/build.pod-name: indy-perf-8-build
+    creationTimestamp: null
+    labels:
+      app: indyperf
+      buildconfig: indy-perf
+      openshift.io/build-config.name: indy-perf
+      openshift.io/build.start-policy: Serial
+    name: indy-perf-8
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: indy-perf
+      uid: 1c217eb3-457a-11e9-b66b-fa163e4a655d
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-m6d72
+      to:
+        kind: ImageStreamTag
+        name: indy-perf:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        commit: b2de2390fef7a43f9757cef18a3e2d86bd7c33c8
+        committer:
+          email: ggeorgie@redhat.com
+          name: Georgy
+        message: Test Indy Performance
+      type: Git
+    serviceAccount: builder
+    source:
+      git:
+        uri: https://github.com/geored/indy-perf.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: georgy/maven@sha256:ca7c742fddb0d889e1c38cefffd111d6d98d188def14fd6d7a3c92cb07a6dd2d
+      type: Docker
+    triggeredBy:
+    - message: Manually triggered
+  status:
+    config:
+      name: indy-perf
+    output:
+      to:
+        imageDigest: sha256:3669f35aac54db5b19874f076a4872225a2544b29b26c204363aad17e7b8f099
+    outputDockerImageReference: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 1364
+      name: FetchInputs
+      startTime: 2019-03-13T14:18:47Z
+      steps:
+      - durationMilliseconds: 1364
+        name: FetchGitSource
+        startTime: 2019-03-13T14:18:47Z
+    - durationMilliseconds: 689809
+      name: Build
+      startTime: 2019-03-13T14:18:52Z
+      steps:
+      - durationMilliseconds: 689809
+        name: DockerBuild
+        startTime: 2019-03-13T14:18:52Z
+    - durationMilliseconds: 21651
+      name: PushImage
+      startTime: 2019-03-13T14:30:22Z
+      steps:
+      - durationMilliseconds: 21651
+        name: PushDockerImage
+        startTime: 2019-03-13T14:30:22Z
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/image.dockerRepositoryCheck: 2019-03-13T11:51:09Z
+    creationTimestamp: null
+    generation: 5
+    labels:
+      app: indyperf
+    name: indy-perf
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/nos-perf/indy-perf:latest
+      generation: 5
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/image.dockerRepositoryCheck: 2019-03-13T10:23:57Z
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: indyperf
+    name: maven
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: georgy/maven:3.5.4_8u191-jdk
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/nos-perf/maven:3.5.4_8u191-jdk
+      generation: 2
+      importPolicy: {}
+      name: 3.5.4_8u191-jdk
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: indyperf
+    name: indy-perf
+  spec:
+    host: indy-perf-nos-perf.cloud.paas.upshift.redhat.com
+    port:
+      targetPort: 8080-tcp
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: indy-perf
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2019-03-14T23:00:06Z
+        status: "True"
+        type: Admitted
+      host: indy-perf-nos-perf.cloud.paas.upshift.redhat.com
+      routerName: router
+      wildcardPolicy: None
